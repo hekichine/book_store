@@ -8,11 +8,11 @@ const categoryController = {
         res.status(200).json({
           message: "Get all category",
           success: true,
-          category: result,
+          categories: result,
         });
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           message: "Get failed",
           success: false,
           err,
@@ -20,9 +20,14 @@ const categoryController = {
       });
   },
   create: async (req, res) => {
+    const fileName = req.file?.filename;
+
+    const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
     let category = new categorySchema({
       name: req.body?.name,
+      image: `${basePath}${fileName}`,
     });
+
     let findCate = await categorySchema.find({ name: req.body?.name });
     if (findCate.length > 0) {
       return res.status(200).json({
@@ -40,7 +45,7 @@ const categoryController = {
         })
       )
       .catch((err) =>
-        res.status(500).json({
+        res.status(200).json({
           message: "The category can't created",
           err,
           success: false,
@@ -65,7 +70,7 @@ const categoryController = {
         }
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           message: "Error query",
           success: false,
           err,
@@ -91,7 +96,7 @@ const categoryController = {
         }
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           message: "Error",
           success: false,
         });
@@ -99,7 +104,12 @@ const categoryController = {
   },
   update: async (req, res) => {
     let { id } = req.params;
-    let category = req.body;
+    const fileName = req.file?.filename;
+    const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
+    let category = {
+      name: req.body?.name,
+      image: `${basePath}${fileName}`,
+    };
     await categorySchema
       .findByIdAndUpdate(category?.id || id, category, { new: true })
       .then((result) => {
@@ -116,7 +126,7 @@ const categoryController = {
         }
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           success: false,
           err,
         });

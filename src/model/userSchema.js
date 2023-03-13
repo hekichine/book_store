@@ -7,6 +7,10 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    avatar: {
+      type: String,
+      default: "http://localhost:8080/uploads/heki.jpg",
+    },
     email: {
       type: String,
       required: true,
@@ -18,16 +22,15 @@ const userSchema = mongoose.Schema(
     },
     fullname: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
+
       default: "",
     },
     phone: {
       type: String,
-      required: true,
+
       default: "",
     },
     isAdmin: {

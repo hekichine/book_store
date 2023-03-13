@@ -1,22 +1,21 @@
 import userSchema from "../model/userSchema";
 import bcrypt from "bcrypt";
 require("dotenv/config");
-import jwt from "jsonwebtoken";
 
 const secret = process.env.SECRET;
 
 let userController = {
   getlist: async (req, res) => {
-    let result = await userSchema.find();
-    if (!result) {
-      res.status(500).json({
+    let users = await userSchema.find();
+    if (!users) {
+      res.status(200).json({
         success: false,
       });
     }
     res.status(200).json({
       message: "Get list user",
       success: true,
-      result,
+      users,
     });
   },
   create: async (req, res) => {
@@ -41,27 +40,27 @@ let userController = {
       username: req.body?.username,
       email: req.body?.email,
       password: bcrypt.hashSync(req.body?.password, 10),
-      fullname: req.body?.fullname,
-      address: req.body?.address,
-      phone: req.body?.phone,
-      isAdmin: req.body?.isAdmin,
+      isAdmin: false,
     });
+    console.log(user);
     await user
       .save()
-      .then((user) =>
+      .then((user) => {
+        console.log(user);
         res.status(200).json({
           message: "Create success",
           success: true,
           user: user,
-        })
-      )
-      .catch((err) =>
-        res.status(500).json({
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(200).json({
           message: "The user can't created",
           err,
           success: false,
-        })
-      );
+        });
+      });
   },
   findById: async (req, res) => {
     let { id } = req.params;
@@ -83,7 +82,7 @@ let userController = {
         }
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           message: "Error",
           success: false,
         });
@@ -98,22 +97,15 @@ let userController = {
       });
     }
     if (user && bcrypt.compareSync(req.body?.password, user.password)) {
-      const token = jwt.sign(
-        {
-          userId: user.id,
-        },
-        secret,
-        {
-          expiresIn: "365d",
-        }
-      );
       res.status(200).json({
         message: "Signin success",
         success: true,
         user: {
           username: user.username,
           fullname: user.fullname,
-          token: token,
+          fullname: user.fullname,
+          avatar: user.avatar,
+          isAdmin: user.isAdmin,
         },
       });
     } else {
@@ -122,6 +114,32 @@ let userController = {
         success: false,
       });
     }
+  },
+  delete: async (req, res) => {
+    let { id } = req.params;
+
+    await userSchema
+      .findByIdAndDelete(id)
+      .then((user) => {
+        if (user) {
+          res.status(200).json({
+            message: "Delete user success",
+            success: true,
+          });
+        } else {
+          res.status(200).json({
+            message: "Delete user error",
+            success: false,
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(200).json({
+          message: "Error",
+          success: false,
+          error: err,
+        });
+      });
   },
 };
 export default userController;

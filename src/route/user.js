@@ -16,6 +16,8 @@ const initUserRoutes = (app) => {
   router.get("/:id", userController.findById);
   // sign in
   router.post("/signin", userController.signin);
+  //delete
+  router.delete("/:id", userController.delete);
 
   app.use(`${api}/users`, router);
 };

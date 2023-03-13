@@ -7,34 +7,32 @@ const productController = {
     let cate = await categorySchema.findById({ _id: req.body?.category });
     if (!cate)
       return res
-        .status(400)
+        .status(200)
         .json({ message: "ID category invalid", success: false });
     let name = await productSchema.findOne({ name: req.body?.name });
     if (name) {
       return res
-        .status(400)
+        .status(200)
         .json({ message: "Product is ready exists", success: false });
     }
     let file = req.file;
     if (!file) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "No images",
         success: false,
       });
     }
     const fileName = req.file?.filename;
-    const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+    const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
     const product = new productSchema({
       name: req.body?.name,
       description: req.body?.description,
-      richDescription: req.body?.richDescription,
       image: `${basePath}${fileName}`,
-      brand: req.body?.brand,
       price: req.body?.price,
+      sale: req.body?.sale,
       category: req.body?.category,
       countInStock: req.body?.countInStock,
-      rating: req.body?.rating,
-      numReviews: req.body?.numReviews,
+      publisher: req.body?.publisher,
       isFeatured: req.body?.isFeatured,
     });
 
@@ -48,8 +46,9 @@ const productController = {
         });
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           error: err,
+          message: "Error",
           success: false,
         });
       });
@@ -71,7 +70,7 @@ const productController = {
         });
       })
       .catch((err) => {
-        res.status(400).json({
+        res.status(200).json({
           message: "Not found",
           success: false,
           err,
@@ -83,14 +82,14 @@ const productController = {
     try {
       if (!mongoose.isValidObjectId(id)) {
         return res
-          .status(400)
+          .status(200)
           .json({ message: "Invalid product id", success: false });
       }
       if (req.body?.category) {
         let cate = await categorySchema.findById({ _id: req.body?.category });
         if (!cate)
           return res
-            .status(400)
+            .status(200)
             .json({ message: "ID category invalid", success: false });
       }
 
@@ -99,19 +98,17 @@ const productController = {
         {
           name: req.body?.name,
           description: req.body?.description,
-          richDescription: req.body?.richDescription,
-          brand: req.body?.brand,
           price: req.body?.price,
+          sale: req.body?.sale,
           category: req.body?.category,
+          publisher: req.body?.publisher,
           countInStock: req.body?.countInStock,
-          rating: req.body?.rating,
-          numReviews: req.body?.numReviews,
           isFeatured: req.body?.isFeatured,
         },
         { new: true }
       );
       if (!product) {
-        return res.status(500).json({
+        return res.status(200).json({
           message: "The product cannot updated",
           success: false,
         });
@@ -122,8 +119,9 @@ const productController = {
         product: product,
       });
     } catch (error) {
-      return res.status(500).json({
+      return res.status(200).json({
         error,
+        success: false,
       });
     }
   },
@@ -145,7 +143,7 @@ const productController = {
         }
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           message: "Error query",
           success: false,
           err,
@@ -171,7 +169,7 @@ const productController = {
         }
       })
       .catch((err) => {
-        res.status(500).json({
+        res.status(200).json({
           message: "Error",
           success: false,
         });
@@ -181,7 +179,7 @@ const productController = {
     let productCount = await productSchema.countDocuments();
 
     if (!productController) {
-      res.status(500).json({
+      res.status(200).json({
         success: false,
       });
     }
@@ -195,7 +193,7 @@ const productController = {
     let products = await productSchema.find({ isFeatured: true }).limit(+count);
 
     if (!products) {
-      res.status(500).json({
+      res.status(200).json({
         success: false,
       });
     }
@@ -208,10 +206,16 @@ const productController = {
     try {
       if (!mongoose.isValidObjectId(id)) {
         return res
-          .status(400)
+          .status(200)
           .json({ message: "Invalid product id", success: false });
       }
       const files = req.files;
+      if (files?.length === 0) {
+        return res.status(200).json({
+          message: "No gallery",
+          success: false,
+        });
+      }
       const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
       let imagesPaths = [];
       if (files) {
@@ -226,8 +230,9 @@ const productController = {
         },
         { new: true }
       );
+      console.log(imagesPaths);
       if (!product) {
-        return res.status(500).json({
+        return res.status(200).json({
           message: "The gallery cannot updated",
           success: false,
         });
@@ -238,7 +243,7 @@ const productController = {
         product: product,
       });
     } catch (error) {
-      return res.status(500).json({
+      return res.status(200).json({
         error,
       });
     }
@@ -248,10 +253,11 @@ const productController = {
     try {
       if (!mongoose.isValidObjectId(id)) {
         return res
-          .status(400)
+          .status(200)
           .json({ message: "Invalid product id", success: false });
       }
       const file = req.file;
+
       const basePath = `${req.protocol}://${req.get("host")}/uploads/`;
 
       const product = await productSchema.findByIdAndUpdate(
@@ -262,7 +268,7 @@ const productController = {
         { new: true }
       );
       if (!product) {
-        return res.status(500).json({
+        return res.status(200).json({
           message: "The gallery cannot updated",
           success: false,
         });
@@ -273,7 +279,7 @@ const productController = {
         product: product,
       });
     } catch (error) {
-      return res.status(500).json({
+      return res.status(200).json({
         error,
       });
     }

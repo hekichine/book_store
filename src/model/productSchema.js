@@ -11,10 +11,6 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    richDescription: {
-      type: String,
-      default: "",
-    },
     image: {
       type: String,
       required: true,
@@ -24,11 +20,11 @@ const productSchema = mongoose.Schema(
         type: String,
       },
     ],
-    brand: {
-      type: String,
-      default: "",
-    },
     price: {
+      type: Number,
+      default: 0,
+    },
+    sale: {
       type: Number,
       default: 0,
     },
@@ -42,13 +38,9 @@ const productSchema = mongoose.Schema(
       min: 0,
       max: 99999,
     },
-    rating: {
-      type: Number,
-      default: 5,
-    },
-    numReviews: {
-      type: Number,
-      default: 0,
+    publisher: {
+      type: String,
+      default: "Đang cập nhật",
     },
     isFeatured: {
       type: Boolean,

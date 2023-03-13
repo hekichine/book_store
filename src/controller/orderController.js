@@ -6,6 +6,10 @@ const orderController = {
     const orderList = await orderSchema
       .find()
       .populate("user", "fullname")
+      .populate({
+        path: "orderItems",
+        populate: "product",
+      })
       .sort("createdAt");
 
     if (!orderList) {
