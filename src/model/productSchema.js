@@ -38,13 +38,13 @@ const productSchema = mongoose.Schema(
       min: 0,
       max: 99999,
     },
-    publisher: {
+    author: {
       type: String,
-      default: "Đang cập nhật",
+      default: "Updating",
     },
     isFeatured: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: 0,
     },
   },
   {

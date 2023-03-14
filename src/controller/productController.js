@@ -32,7 +32,7 @@ const productController = {
       sale: req.body?.sale,
       category: req.body?.category,
       countInStock: req.body?.countInStock,
-      publisher: req.body?.publisher,
+      author: req.body?.author,
       isFeatured: req.body?.isFeatured,
     });
 
@@ -52,6 +52,8 @@ const productController = {
           success: false,
         });
       });
+
+    // console.log(prodt);
   },
   getall: async (req, res) => {
     //query api/v1/products?category=xassada
@@ -101,7 +103,7 @@ const productController = {
           price: req.body?.price,
           sale: req.body?.sale,
           category: req.body?.category,
-          publisher: req.body?.publisher,
+          author: req.body?.author,
           countInStock: req.body?.countInStock,
           isFeatured: req.body?.isFeatured,
         },
@@ -154,6 +156,7 @@ const productController = {
     let { id } = req.params;
     await productSchema
       .findById(id)
+      .populate("category")
       .then((result) => {
         if (result) {
           res.status(200).json({
